@@ -25,6 +25,7 @@ function EmailLoginScreen({ navigation }: Props) {
   const handleLogin = () => {
     if (email === 'test@example.com' && password === 'password123') {
       Alert.alert('로그인 성공');
+      navigation.navigate('TabNavigation')
     } else {
       setLoginAttempts(prev => prev + 1);
       if (loginAttempts >= 2) {
