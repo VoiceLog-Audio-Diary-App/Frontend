@@ -8,7 +8,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 type RootStackParamList = {
     MyPage: undefined;
     PasswordCheck: undefined;
-    EmailLogin: undefined;
+    Login: undefined;
 };
 
 type MyPageScreenNavigationProp = StackNavigationProp<
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#8E8E8E',
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: 5,
   },
   alertButtonContainer: {
       flexDirection: 'row',
@@ -159,6 +159,7 @@ function MyPageScreen({ navigation }: Props) {
     const [coin, setCoin] = useState(0);
     const [isModalVisible, setModalVisible] = useState(false);
     const [logoutAlertVisible, setLogoutAlertVisible] = useState(false);
+    const [deleteAlertVisible, setDeleteAlertVisible] = useState(false);
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
     };
@@ -218,7 +219,7 @@ function MyPageScreen({ navigation }: Props) {
          </View>
      </TouchableWithoutFeedback>
      <View style={styles.thinLine} />
-     <TouchableWithoutFeedback>
+     <TouchableWithoutFeedback onPress={() => setDeleteAlertVisible(true)}>
        <View style={styles.button}>
           <View style={styles.buttonContent}>
               <Text style={styles.leftText}>회원탈퇴</Text>
@@ -289,7 +290,7 @@ function MyPageScreen({ navigation }: Props) {
               <View style={styles.alertContainer}>
                 <Text style={styles.alertTitle}>로그아웃</Text>
                 <Text style={styles.alertMessage}>로그아웃 하시겠어요?</Text>
-
+                <View style={{height: 15}}/>
                 <View style={styles.alertButtonContainer}>
                   <TouchableOpacity
                     style={[styles.alertButton, styles.cancelButton]}
@@ -302,7 +303,7 @@ function MyPageScreen({ navigation }: Props) {
                     style={[styles.alertButton, styles.confirmButton]}
                     onPress={() => {
                       setLogoutAlertVisible(false);
-                      navigation.navigate('EmailLogin');
+                      navigation.navigate('Login');
                     }}
                   >
                     <Text style={styles.confirmButtonText}>로그아웃</Text>
@@ -311,6 +312,41 @@ function MyPageScreen({ navigation }: Props) {
               </View>
             </View>
           </Modal>
+
+          <Modal
+              animationType="slide"
+              transparent={true}
+              visible={deleteAlertVisible}
+              onRequestClose={() => setDeleteAlertVisible(false)}
+              style={{ justifyContent: 'center', alignItems: 'center', margin: 0 }} // 전체 화면을 덮도록 설정
+            >
+              <View style={styles.alertOverlay}>
+                <View style={styles.alertContainer}>
+                  <Text style={styles.alertTitle}>회원탈퇴</Text>
+                  <Text style={styles.alertMessage}>탈퇴하시면 복구가 불가능합니다.</Text>
+                  <Text style={styles.alertMessage}>탈퇴하시겠어요?</Text>
+                  <View style={{height: 15}}/>
+                  <View style={styles.alertButtonContainer}>
+                    <TouchableOpacity
+                      style={[styles.alertButton, styles.cancelButton]}
+                      onPress={() => setDeleteAlertVisible(false)}
+                    >
+                      <Text style={styles.cancelButtonText}>아니오</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={[styles.alertButton, styles.confirmButton]}
+                      onPress={() => {
+                        setDeleteAlertVisible(false);
+                        navigation.navigate('Login');
+                      }}
+                    >
+                      <Text style={styles.confirmButtonText}>탈퇴하기</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+            </Modal>
      </SafeAreaView>
   );
 }
