@@ -7,9 +7,10 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 
 type RootStackParamList = {
     MyPage: undefined;
+    PasswordCheck: undefined;
 };
 
-type CalendarScreenNavigationProp = StackNavigationProp<
+type MyPageScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
   'MyPage'
 >;
@@ -143,7 +144,7 @@ function MyPageScreen({ navigation }: Props) {
            </View>
        </TouchableWithoutFeedback>
        <View style={styles.line} />
-       <TouchableWithoutFeedback>
+       <TouchableWithoutFeedback onPress={() => navigation.navigate('PasswordCheck')}>
           <View style={styles.button}>
              <View style={styles.buttonContent}>
                  <Text style={styles.leftText}>비밀번호 변경</Text>

@@ -13,6 +13,7 @@ import SaveRecordingScreen from './screens/SaveRecordingScreen';
 import ViewDiaryScreen from './screens/ViewDiaryScreen';
 import EditDiaryScreen from './screens/EditDiaryScreen';
 import TabNavigation from './navigations/Tab';
+import PasswordCheckScreen from './screens/PasswordCheckScreen';
 
 const Stack = createStackNavigator();
 
@@ -39,6 +40,7 @@ function App() {
         {/*<Stack.Screen name="EditDiary" component={EditDiaryScreen} />*/}
 
         {/* 마이페이지 */}
+        <Stack.Screen name="PasswordCheck" component={PasswordCheckScreen} />
 
       </Stack.Navigator>
     </NavigationContainer>
