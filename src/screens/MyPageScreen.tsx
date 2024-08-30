@@ -8,6 +8,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 type RootStackParamList = {
     MyPage: undefined;
     PasswordCheck: undefined;
+    EmailLogin: undefined;
 };
 
 type MyPageScreenNavigationProp = StackNavigationProp<
@@ -93,7 +94,63 @@ const styles = StyleSheet.create({
         paddingVertical: 15,
         borderRadius: 20,
         marginVertical: 7,
-    }
+    },
+  alertOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  alertContainer: {
+    width: 300,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 20,
+    alignItems: 'center',
+  },
+  alertTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  alertMessage: {
+    fontSize: 14,
+    color: '#8E8E8E',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  alertButtonContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      width: '100%',
+    },
+    alertButton: {
+      flex: 1,
+      height: 45,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 10,
+      marginHorizontal: 5,
+    },
+    cancelButton: {
+      backgroundColor: '#F0F0F0',
+    },
+    cancelButtonText: {
+      color: '#8E8E8E',
+      fontWeight: 'bold',
+    },
+    confirmButton: {
+      backgroundColor: 'black',
+    },
+    confirmButtonText: {
+      color: 'white',
+      fontWeight: 'bold',
+    },
 
 });
 
@@ -101,6 +158,7 @@ function MyPageScreen({ navigation }: Props) {
     const [email, setEmail] = useState('example@company.com');
     const [coin, setCoin] = useState(0);
     const [isModalVisible, setModalVisible] = useState(false);
+    const [logoutAlertVisible, setLogoutAlertVisible] = useState(false);
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
     };
@@ -152,7 +210,7 @@ function MyPageScreen({ navigation }: Props) {
           </View>
        </TouchableWithoutFeedback>
        <View style={styles.thinLine} />
-       <TouchableWithoutFeedback>
+       <TouchableWithoutFeedback onPress={() => setLogoutAlertVisible(true)}>
          <View style={styles.button}>
             <View style={styles.buttonContent}>
                 <Text style={styles.leftText}>로그아웃</Text>
@@ -219,6 +277,40 @@ function MyPageScreen({ navigation }: Props) {
             </TouchableWithoutFeedback>
           </View>
         </Modal>
+
+        <Modal
+            animationType="slide"
+            transparent={true}
+            visible={logoutAlertVisible}
+            onRequestClose={() => setLogoutAlertVisible(false)}
+            style={{ justifyContent: 'center', alignItems: 'center', margin: 0 }} // 전체 화면을 덮도록 설정
+          >
+            <View style={styles.alertOverlay}>
+              <View style={styles.alertContainer}>
+                <Text style={styles.alertTitle}>로그아웃</Text>
+                <Text style={styles.alertMessage}>로그아웃 하시겠어요?</Text>
+
+                <View style={styles.alertButtonContainer}>
+                  <TouchableOpacity
+                    style={[styles.alertButton, styles.cancelButton]}
+                    onPress={() => setLogoutAlertVisible(false)}
+                  >
+                    <Text style={styles.cancelButtonText}>아니오</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={[styles.alertButton, styles.confirmButton]}
+                    onPress={() => {
+                      setLogoutAlertVisible(false);
+                      navigation.navigate('EmailLogin');
+                    }}
+                  >
+                    <Text style={styles.confirmButtonText}>로그아웃</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Modal>
      </SafeAreaView>
   );
 }
