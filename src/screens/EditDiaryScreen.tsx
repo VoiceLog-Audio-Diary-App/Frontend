@@ -24,7 +24,7 @@ type Props = {
 };
 
 function EditDiaryScreen({ route, navigation }: Props) {
-  const { date } = route.params;
+  const { date } = route.params || { date: new Date().toISOString().split('T')[0] };
   const [title, setTitle] = useState<string>('일기 제목');
   const [content, setContent] = useState<string>('어쩌구저쩌구 일기 내용');
 
