@@ -26,7 +26,7 @@ function App() {
 
         {/* 로그인 관련 화면들 */}
         <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="EmailLogin" component={EmailLoginScreen} />
+        <Stack.Screen name="EmailLogin" component={EmailLoginScreen} options={{headerShown: false}}/>
         <Stack.Screen name="SignUp" component={SignUpScreen} />
         <Stack.Screen name="EmailVerification" component={EmailVerificationScreen} />
         <Stack.Screen name="PasswordReset" component={PasswordResetScreen} />
