@@ -74,7 +74,7 @@ function LoginScreen({ navigation }: Props) {
         <Image source={Logo} style={{height: 150, width: 150}}/>
         <View style={styles.container}>
             <Text style={styles.logoText}>VoiceLog</Text>
-            <View style={{height: 90}}/>
+            <View style={{height: 150}}/>
             <TouchableWithoutFeedback onPress={handleNaver}>
               <View>
                 <Image source={Naver} style={styles.buttonImage}/>
