@@ -25,7 +25,7 @@ function App() {
         <Stack.Screen name="TabNavigation" component={TabNavigation} options={{headerShown: false}}/>
 
         {/* 로그인 관련 화면들 */}
-        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Login" component={LoginScreen} options={{headerShown: false}}/>
         <Stack.Screen name="EmailLogin" component={EmailLoginScreen} options={{headerShown: false}}/>
         <Stack.Screen name="SignUp" component={SignUpScreen} />
         <Stack.Screen name="EmailVerification" component={EmailVerificationScreen} />
