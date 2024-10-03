@@ -3,6 +3,55 @@
   "reactNativePath": "D:\\VoiceLog\\VoiceLogApp\\node_modules\\react-native",
   "reactNativeVersion": "0.75",
   "dependencies": {
+    "@react-native-async-storage/async-storage": {
+      "root": "D:\\VoiceLog\\VoiceLogApp\\node_modules\\@react-native-async-storage\\async-storage",
+      "name": "@react-native-async-storage/async-storage",
+      "platforms": {
+        "ios": {
+          "podspecPath": "D:\\VoiceLog\\VoiceLogApp\\node_modules\\@react-native-async-storage\\async-storage\\RNCAsyncStorage.podspec",
+          "version": "2.0.0",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "D:\\VoiceLog\\VoiceLogApp\\node_modules\\@react-native-async-storage\\async-storage\\android",
+          "packageImportPath": "import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;",
+          "packageInstance": "new AsyncStoragePackage()",
+          "buildTypes": [],
+          "libraryName": "rnasyncstorage",
+          "componentDescriptors": [],
+          "cmakeListsPath": "D:/VoiceLog/VoiceLogApp/node_modules/@react-native-async-storage/async-storage/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        }
+      }
+    },
+    "react-native-audio-recorder-player": {
+      "root": "D:\\VoiceLog\\VoiceLogApp\\node_modules\\react-native-audio-recorder-player",
+      "name": "react-native-audio-recorder-player",
+      "platforms": {
+        "ios": {
+          "podspecPath": "D:\\VoiceLog\\VoiceLogApp\\node_modules\\react-native-audio-recorder-player\\RNAudioRecorderPlayer.podspec",
+          "version": "3.6.11",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "D:\\VoiceLog\\VoiceLogApp\\node_modules\\react-native-audio-recorder-player\\android",
+          "packageImportPath": "import com.dooboolab.audiorecorderplayer.RNAudioRecorderPlayerPackage;",
+          "packageInstance": "new RNAudioRecorderPlayerPackage()",
+          "buildTypes": [],
+          "componentDescriptors": [],
+          "cmakeListsPath": "D:/VoiceLog/VoiceLogApp/node_modules/react-native-audio-recorder-player/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        }
+      }
+    },
     "react-native-gesture-handler": {
       "root": "D:\\VoiceLog\\VoiceLogApp\\node_modules\\react-native-gesture-handler",
       "name": "react-native-gesture-handler",
