@@ -21,6 +21,18 @@
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
+
+          <intent-filter>
+              <action android:name="android.intent.action.VIEW" />
+              <category android:name="android.intent.category.DEFAULT" />
+              <category android:name="android.intent.category.BROWSABLE" />
+
+              <!-- 네이버 OAuth 리디렉션에 해당하는 URL 패턴 -->
+              <data
+                  android:scheme="http"
+                  android:host="localhost"
+                  android:pathPrefix="/login/oauth2/code/naver" />
+          </intent-filter>
       </activity>
     </application>
 </manifest>

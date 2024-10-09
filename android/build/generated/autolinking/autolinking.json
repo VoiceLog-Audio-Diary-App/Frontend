@@ -52,6 +52,30 @@
         }
       }
     },
+    "react-native-encrypted-storage": {
+      "root": "D:\\VoiceLog\\VoiceLogApp\\node_modules\\react-native-encrypted-storage",
+      "name": "react-native-encrypted-storage",
+      "platforms": {
+        "ios": {
+          "podspecPath": "D:\\VoiceLog\\VoiceLogApp\\node_modules\\react-native-encrypted-storage\\react-native-encrypted-storage.podspec",
+          "version": "4.0.3",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "D:\\VoiceLog\\VoiceLogApp\\node_modules\\react-native-encrypted-storage\\android",
+          "packageImportPath": "import com.emeraldsanto.encryptedstorage.RNEncryptedStoragePackage;",
+          "packageInstance": "new RNEncryptedStoragePackage()",
+          "buildTypes": [],
+          "componentDescriptors": [],
+          "cmakeListsPath": "D:/VoiceLog/VoiceLogApp/node_modules/react-native-encrypted-storage/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        }
+      }
+    },
     "react-native-gesture-handler": {
       "root": "D:\\VoiceLog\\VoiceLogApp\\node_modules\\react-native-gesture-handler",
       "name": "react-native-gesture-handler",
@@ -161,6 +185,33 @@
           "libraryName": "RNVectorIconsSpec",
           "componentDescriptors": [],
           "cmakeListsPath": "D:/VoiceLog/VoiceLogApp/node_modules/react-native-vector-icons/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        }
+      }
+    },
+    "react-native-webview": {
+      "root": "D:\\VoiceLog\\VoiceLogApp\\node_modules\\react-native-webview",
+      "name": "react-native-webview",
+      "platforms": {
+        "ios": {
+          "podspecPath": "D:\\VoiceLog\\VoiceLogApp\\node_modules\\react-native-webview\\react-native-webview.podspec",
+          "version": "13.12.3",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "D:\\VoiceLog\\VoiceLogApp\\node_modules\\react-native-webview\\android",
+          "packageImportPath": "import com.reactnativecommunity.webview.RNCWebViewPackage;",
+          "packageInstance": "new RNCWebViewPackage()",
+          "buildTypes": [],
+          "libraryName": "RNCWebViewSpec",
+          "componentDescriptors": [
+            "RNCWebViewComponentDescriptor"
+          ],
+          "cmakeListsPath": "D:/VoiceLog/VoiceLogApp/node_modules/react-native-webview/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
