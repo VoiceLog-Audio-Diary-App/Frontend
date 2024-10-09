@@ -116,6 +116,22 @@ function LoginScreen({ navigation }: Props) {
   const deviceWidth = Dimensions.get('window').width;
   const [alertVisible, setAlertVisible] = useState(false);
 
+  useEffect(() => {
+      const checkTokenAndNavigate = async () => {
+        try {
+          // 토큰 확인
+          const accessToken = await EncryptedStorage.getItem('accessToken');
+
+          if (accessToken) {
+            navigation.replace('TabNavigation');
+          }
+        } catch (error) {
+          console.error('Error checking access token:', error);
+        }
+      };
+      checkTokenAndNavigate();
+    }, [navigation]);
+
   const handleNaverLogin = () => {
     setNaverLoginVisible(true);
   };
@@ -166,7 +182,6 @@ function LoginScreen({ navigation }: Props) {
           setAlertVisible(true);
         }
 
-        // 토큰을 저장 (예: Secure Storage나 Encrypted Storage에 저장)
         await EncryptedStorage.setItem('accessToken', accessToken);
         await EncryptedStorage.setItem('email', email);
 
