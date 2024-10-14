@@ -236,7 +236,7 @@ function SignUpScreen({ navigation }: Props) {
     }, [navigation]);
 
   const handleSignUp = () => {
-    navigation.navigate('EmailVerification', { email: email })
+    sendEmail(email);
   };
 
   const handlePasswordChange = (password) => {
@@ -259,32 +259,32 @@ function SignUpScreen({ navigation }: Props) {
      setIsDisabled(!(email && password && !errorMessage && !errorMessage2));
    }, [email, password, errorMessage, errorMessage2]);
 
-   const postLoginCodeAndState = async (email: string) => {
-       try {
-         const data = {
-           email: email
-         };
+   const sendEmail = async (email: string) => {
+        try {
+          const data = {
+            email: email
+          };
 
-         const response = await axios.post('http://192.168.45.77:8080/auth/email-check', data);
+          const response = await axios.post('http://192.168.45.77:8080/auth/email-certification', data);
 
-         if (response.status === 200) {
-           navigation.navigate('EmailVerification');
-         }
+          if (response.status === 200) {
+            navigation.navigate('EmailVerification', { email: email });
+          }
 
-       } catch (error) {
-           //응답은 왔는데 오류 코드일 경우
-         if (error.response) {
-            if (error.response.status == 400) {
-                setSignUpAlertVisible(true);
-            } else if (error.response.status == 500) {
-                setErrorAlertVisible(true);
-            }
-         } else {
-            setErrorAlertVisible(true);
-         }
-         setAlertVisible(true);
-       }
-     };
+        } catch (error) {
+            //응답은 왔는데 오류 코드일 경우
+          if (error.response) {
+             if (error.response.status == 400) {
+                 console.log(email);
+                 setSignUpAlertVisible(true);
+             } else if (error.response.status == 500) {
+                 setErrorAlertVisible(true);
+             }
+          } else {
+             setErrorAlertVisible(true);
+          }
+        }
+      };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
