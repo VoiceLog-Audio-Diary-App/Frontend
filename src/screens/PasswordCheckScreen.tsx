@@ -91,6 +91,7 @@ function PasswordCheckScreen({ navigation }: Props) {
     const [secureText, setSecureText] = useState(true);
     const [passwordAlertVisible, setPasswordAlertVisible] = useState(false);
     const [errorAlertVisible, setErrorAlertVisible] = useState(false);
+    const [socialAlertVisible, setSocialAlertVisible] = useState(false);
 
     useEffect(() => {
       const loadEmail = async () => {
@@ -109,8 +110,48 @@ function PasswordCheckScreen({ navigation }: Props) {
     }, []);
 
     const handleConfirm = () => {
-        passwordCheck(password);
+        socialCheck();
     };
+
+    const socialCheck = async () => {
+        try {
+
+        const accessToken = await EncryptedStorage.getItem('accessToken');
+
+          const response = await axios.get('http://192.168.45.77:8080/mypage/social-check',
+          {
+              headers: {
+                Authorization: `Bearer ${accessToken}`
+              }
+          });
+
+          if (response.status === 200) {
+            await passwordCheck(password);
+          }
+        } catch (error) {
+            //응답은 왔는데 오류 코드일 경우
+          if (error.response) {
+             if (error.response.status === 403) {
+                 setSocialAlertVisible(true);
+             } else if (error.response.status === 500) {
+                 setErrorAlertVisible(true);
+             } else if (error.response.status === 401) {
+                 const refreshSuccess = await refreshAccessToken();
+                 if (refreshSuccess)
+                    await passwordCheck(oldPassword);
+                 else
+                    setErrorAlertVisible(true);
+             } else {
+              console.log(error.response.status);
+              console.log(error.response.data);
+              console.log('Error Headers:', error.response.headers);
+              setErrorAlertVisible(true);
+             }
+          } else {
+             setErrorAlertVisible(true);
+          }
+        }
+      };
 
     const passwordCheck = async (oldPassword: string) => {
         try {
@@ -263,6 +304,31 @@ function PasswordCheckScreen({ navigation }: Props) {
               </View>
             </View>
           </Modal>
+
+          <Modal
+              animationType="slide"
+              transparent={true}
+              visible={socialAlertVisible}
+              onRequestClose={() => setSocialAlertVisible(false)}
+              style={{ justifyContent: 'center', alignItems: 'center', margin: 0 }}
+            >
+              <View style={styles.alertOverlay}>
+                <View style={styles.alertContainer}>
+                  <Text style={styles.alertTitle}>소셜 로그인 회원</Text>
+                  <Text style={styles.alertMessage}>소셜 로그인 회원은</Text>
+                  <Text style={styles.alertMessage}>비밀번호 변경이 불가합니다.</Text>
+                  <View style={{height: 15}}/>
+                  <View style={styles.alertButtonContainer}>
+                    <TouchableOpacity
+                      style={[styles.alertButton, styles.cancelButton]}
+                      onPress={() => setSocialAlertVisible(false)}
+                    >
+                      <Text style={styles.cancelButtonText}>확인</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+            </Modal>
      </SafeAreaView>
   );
 }
