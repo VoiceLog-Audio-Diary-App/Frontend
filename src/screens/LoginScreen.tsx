@@ -185,7 +185,7 @@ function LoginScreen({ navigation }: Props) {
         await EncryptedStorage.setItem('accessToken', accessToken);
         await EncryptedStorage.setItem('email', email);
 
-        navigation.navigate('TabNavigation')
+        navigation.replace('TabNavigation')
       }
 
     } catch (error) {

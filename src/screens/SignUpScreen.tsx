@@ -5,7 +5,6 @@ import { removeWhitespace, validatePassword, validateEmail } from "../util";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Logo from '../../assets/logo.png';
 import axios, {isCancel, AxiosError} from 'axios';
-import EncryptedStorage from 'react-native-encrypted-storage';
 
 type RootStackParamList = {
   SignUp: undefined;

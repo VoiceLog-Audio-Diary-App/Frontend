@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Button, ScrollView, TouchableOpacity, KeyboardAvoidingView, Alert, Image, StyleSheet, SafeAreaView, Text, TouchableWithoutFeedback, Keyboard, Platform } from 'react-native';
+import { View, Modal, TextInput, Button, ScrollView, TouchableOpacity, KeyboardAvoidingView, Alert, Image, StyleSheet, SafeAreaView, Text, TouchableWithoutFeedback, Keyboard, Platform } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { removeWhitespace, validatePassword, validateEmail } from "../util";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Logo from '../../assets/logo.png';
-import Modal from 'react-native-modal';
+import axios, {isCancel, AxiosError} from 'axios';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 type RootStackParamList = {
   EmailLogin: undefined;
@@ -167,13 +168,10 @@ function EmailLoginScreen({ navigation }: Props) {
   const [secureText, setSecureText] = useState(true);
   const [isDisabled, setIsDisabled] = useState(true);
   const [loginAlertVisible, setLoginAlertVisible] = useState(false);
+  const [errorAlertVisible, setErrorAlertVisible] = useState(false);
 
   const handleLogin = () => {
-    if (email === 'test@example.com' && password === 'password123') {
-      navigation.navigate('TabNavigation')
-    } else {
-      setLoginAlertVisible(true);
-    }
+    signIn(email, password);
   };
 
   const handlePasswordChange = (password) => {
@@ -191,6 +189,47 @@ function EmailLoginScreen({ navigation }: Props) {
         validateEmail(changedEmail) ? "" : "올바르지 않은 형식입니다."
       );
   }
+
+  const signIn = async (email: string, password: string) => {
+    try {
+      const data = {
+        email: email,
+        password: password
+      };
+
+      const response = await axios.post('http://192.168.45.77:8080/auth/sign-in', data);
+
+      if (response.status === 200) {
+        const { accessToken, refreshToken } = response.data;
+
+        if (accessToken) {
+
+          await EncryptedStorage.setItem('accessToken', accessToken);
+          await EncryptedStorage.setItem('email', email);
+
+          navigation.replace('TabNavigation')
+        } else {
+          setErrorAlertVisible(true);
+        }
+      }
+    } catch (error) {
+        //응답은 왔는데 오류 코드일 경우
+      if (error.response) {
+         if (error.response.status == 401) {
+             setLoginAlertVisible(true);
+         } else if (error.response.status == 500) {
+             setErrorAlertVisible(true);
+         } else {
+          console.log(error.response.status);
+          console.log(error.response.data);
+          console.log('Error Headers:', error.response.headers);
+          setErrorAlertVisible(true);
+         }
+      } else {
+         setErrorAlertVisible(true);
+      }
+    }
+  };
 
    useEffect(() => {
      setIsDisabled(!(email && password && !errorMessage && !errorMessage2));
@@ -282,6 +321,30 @@ function EmailLoginScreen({ navigation }: Props) {
             </View>
           </View>
         </Modal>
+
+        <Modal
+            animationType="slide"
+            transparent={true}
+            visible={errorAlertVisible}
+            onRequestClose={() => setErrorAlertVisible(false)}
+            style={{ justifyContent: 'center', alignItems: 'center', margin: 0 }} // 전체 화면을 덮도록 설정
+          >
+            <View style={styles.alertOverlay}>
+              <View style={styles.alertContainer}>
+                <Text style={styles.alertTitle}>오류</Text>
+                <Text style={styles.alertMessage}>다시 시도해주세요.</Text>
+                <View style={{height: 15}}/>
+                <View style={styles.alertButtonContainer}>
+                  <TouchableOpacity
+                    style={[styles.alertButton, styles.cancelButton]}
+                    onPress={() => setErrorAlertVisible(false)}
+                  >
+                    <Text style={styles.cancelButtonText}>확인</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Modal>
     </SafeAreaView>
     </TouchableWithoutFeedback>
   );

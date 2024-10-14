@@ -3,7 +3,6 @@ import { View, TextInput, Modal, Button, Text, Alert, StyleSheet, SafeAreaView, 
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import axios, {isCancel, AxiosError} from 'axios';
-import EncryptedStorage from 'react-native-encrypted-storage';
 
 type RootStackParamList = {
   EmailVerification: { email: string, password: string };
