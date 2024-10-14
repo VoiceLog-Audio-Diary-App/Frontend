@@ -30,7 +30,6 @@ function App() {
         <Stack.Screen name="EmailLogin" component={EmailLoginScreen} options={{headerShown: false}}/>
         <Stack.Screen name="SignUp" component={SignUpScreen} />
         <Stack.Screen name="EmailVerification" component={EmailVerificationScreen} />
-        <Stack.Screen name="PasswordReset" component={PasswordResetScreen} />
         <Stack.Screen name="NewPassword" component={NewPasswordScreen} />
         <Stack.Screen name="PasswordEmailVerification" component={PasswordEmailVerificationScreen} />
 

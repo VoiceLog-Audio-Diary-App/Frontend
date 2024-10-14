@@ -1,16 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SafeAreaView, Text, Button, StyleSheet, View, TouchableWithoutFeedback, TouchableOpacity, Linking } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import Modal from 'react-native-modal';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import EncryptedStorage from 'react-native-encrypted-storage';
+import axios, {isCancel, AxiosError} from 'axios';
+import { refreshAccessToken } from '../authService';
 
 
 type RootStackParamList = {
     MyPage: undefined;
     PasswordCheck: undefined;
     Login: undefined;
+    NewPassword: undefined;
+    PasswordEmailVerification: undefined;
 };
 
 type MyPageScreenNavigationProp = StackNavigationProp<
@@ -157,11 +161,28 @@ const styles = StyleSheet.create({
 });
 
 function MyPageScreen({ navigation }: Props) {
-    const [email, setEmail] = useState('example@company.com');
+    const [email, setEmail] = useState('');
     const [coin, setCoin] = useState(0);
     const [isModalVisible, setModalVisible] = useState(false);
     const [logoutAlertVisible, setLogoutAlertVisible] = useState(false);
     const [deleteAlertVisible, setDeleteAlertVisible] = useState(false);
+
+    useEffect(() => {
+      const loadEmail = async () => {
+        try {
+
+          const storedEmail = await EncryptedStorage.getItem('email');
+
+          if (storedEmail) {
+            setEmail(storedEmail);
+          }
+        } catch (error) {
+          console.error('Error checking load email:', error);
+        }
+      };
+      loadEmail();
+    }, []);
+
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
     };

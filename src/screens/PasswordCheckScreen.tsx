@@ -125,9 +125,16 @@ const styles = StyleSheet.create({
         marginHorizontal: 5,
       },
       cancelButton: {
-        backgroundColor: '#252525',
+        backgroundColor: '#F0F0F0',
       },
       cancelButtonText: {
+        color: '#252525',
+        fontWeight: 'bold',
+      },
+    alertConfirmButton: {
+        backgroundColor: '#252525',
+      },
+      alertConfirmButtonText: {
         color: 'white',
         fontWeight: 'bold',
       },
@@ -141,6 +148,7 @@ function PasswordCheckScreen({ navigation }: Props) {
     const [passwordAlertVisible, setPasswordAlertVisible] = useState(false);
     const [errorAlertVisible, setErrorAlertVisible] = useState(false);
     const [socialAlertVisible, setSocialAlertVisible] = useState(false);
+    const [emailAlertVisible, setEmailAlertVisible] = useState(false);
 
     useEffect(() => {
       const loadEmail = async () => {
@@ -245,6 +253,28 @@ function PasswordCheckScreen({ navigation }: Props) {
         }
       };
 
+  const sendEmail = async (email: string) => {
+      try {
+        const data = {
+          email: email
+        };
+
+        const response = await axios.post('http://192.168.45.77:8080/auth/email-certification', data);
+
+        if (response.status === 200) {
+          navigation.navigate('PasswordEmailVerification', { email: email });
+        }
+
+      } catch (error) {
+          //응답은 왔는데 오류 코드일 경우
+        if (error.response) {
+           setErrorAlertVisible(true);
+        } else {
+           setErrorAlertVisible(true);
+        }
+      }
+    };
+
     //앱바
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -293,7 +323,7 @@ function PasswordCheckScreen({ navigation }: Props) {
                     />
                 </TouchableOpacity>
             </View>
-            <TouchableWithoutFeedback onPress={() => navigation.navigate('PasswordReset')}>
+            <TouchableWithoutFeedback onPress={() => setEmailAlertVisible(true)}>
                 <View style={styles.buttonContainer}>
                   <Text style={styles.textButton}>
                     비밀번호를 잊으셨나요?
@@ -373,6 +403,41 @@ function PasswordCheckScreen({ navigation }: Props) {
                       onPress={() => setSocialAlertVisible(false)}
                     >
                       <Text style={styles.cancelButtonText}>확인</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+            </Modal>
+
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={emailAlertVisible}
+              onRequestClose={() => setErrorAlertVisible(false)}
+              style={{ justifyContent: 'center', alignItems: 'center', margin: 0 }}
+            >
+              <View style={styles.alertOverlay}>
+                <View style={styles.alertContainer}>
+                  <Text style={styles.alertTitle}>인증번호 전송</Text>
+                  <Text style={styles.alertMessage}>가입하신 이메일로 인증번호를 보내드립니다.</Text>
+                  <Text style={styles.alertMessage}>{email}</Text>
+                  <View style={{height: 15}}/>
+                  <View style={styles.alertButtonContainer}>
+                    <TouchableOpacity
+                      style={[styles.alertButton, styles.cancelButton]}
+                      onPress={() => setErrorAlertVisible(false)}
+                    >
+                      <Text style={styles.cancelButtonText}>아니오</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={[styles.alertButton, styles.alertConfirmButton]}
+                      onPress={() => {
+                        setErrorAlertVisible(false);
+                        sendEmail(email);
+                      }}
+                    >
+                      <Text style={styles.alertConfirmButtonText}>확인</Text>
                     </TouchableOpacity>
                   </View>
                 </View>

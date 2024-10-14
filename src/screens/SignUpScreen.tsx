@@ -235,7 +235,7 @@ function SignUpScreen({ navigation }: Props) {
     }, [navigation]);
 
   const handleSignUp = () => {
-    sendEmail(email);
+    emailCheck(email);
   };
 
   const handlePasswordChange = (password) => {
@@ -258,6 +258,37 @@ function SignUpScreen({ navigation }: Props) {
      setIsDisabled(!(email && password && !errorMessage && !errorMessage2));
    }, [email, password, errorMessage, errorMessage2]);
 
+   const emailCheck = async (email: string) => {
+       try {
+         const data = {
+           email: email,
+         };
+
+         const response = await axios.post('http://192.168.45.77:8080/auth/email-check', data);
+
+         if (response.status === 200) {
+           sendEmail(email);
+         }
+
+       } catch (error) {
+           //응답은 왔는데 오류 코드일 경우
+         if (error.response) {
+            if (error.response.status == 400) {
+                setSignUpAlertVisible(true);
+            } else if (error.response.status == 500) {
+                setErrorAlertVisible(true);
+            } else {
+             console.log(error.response.status);
+             console.log(error.response.data);
+             console.log('Error Headers:', error.response.headers);
+             setErrorAlertVisible(true);
+            }
+         } else {
+            setErrorAlertVisible(true);
+         }
+       }
+     };
+
    const sendEmail = async (email: string) => {
         try {
           const data = {
@@ -273,12 +304,7 @@ function SignUpScreen({ navigation }: Props) {
         } catch (error) {
             //응답은 왔는데 오류 코드일 경우
           if (error.response) {
-             if (error.response.status == 400) {
-                 console.log(email);
-                 setSignUpAlertVisible(true);
-             } else if (error.response.status == 500) {
-                 setErrorAlertVisible(true);
-             }
+             setErrorAlertVisible(true);
           } else {
              setErrorAlertVisible(true);
           }

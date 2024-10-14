@@ -6,7 +6,7 @@ import axios, {isCancel, AxiosError} from 'axios';
 import EncryptedStorage from 'react-native-encrypted-storage';
 
 type RootStackParamList = {
-    PasswordEmailVerification: undefined;
+    PasswordEmailVerification: { email: string };
     NewPassword: undefined;
 };
 
@@ -144,27 +144,11 @@ const styles = StyleSheet.create({
 
 function EmailVerificationScreen({ route, navigation }: Props) {
   const [code, setCode] = useState(Array(6).fill(''));
-  const [email, setEmail] = useState('');
+  const { email } = route.params;
   const codeInputRefs = useRef<Array<any>>([]);
   const [alertVisible, setAlertVisible] = useState(false);
   const [errorAlertVisible, setErrorAlertVisible] = useState(false);
   const [signUpAlertVisible, setSignUpAlertVisible] = useState(false);
-
-  useEffect(() => {
-    const loadEmail = async () => {
-      try {
-
-        const storedEmail = await EncryptedStorage.getItem('email');
-
-        if (storedEmail) {
-          setEmail(storedEmail);
-        }
-      } catch (error) {
-        console.error('Error checking load email:', error);
-      }
-    };
-    loadEmail();
-  }, []);
 
   const handleVerify = () => {
     certificationCheck(email, code.join(''));
