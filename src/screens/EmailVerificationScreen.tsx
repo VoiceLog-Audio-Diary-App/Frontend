@@ -2,6 +2,8 @@ import React, { useState, useLayoutEffect, useRef } from 'react';
 import { View, TextInput, Modal, Button, Text, Alert, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
+import axios, {isCancel, AxiosError} from 'axios';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 type RootStackParamList = {
   EmailVerification: { email: string };
@@ -145,15 +147,10 @@ function EmailVerificationScreen({ route, navigation }: Props) {
   const { email } = route.params;
   const codeInputRefs = useRef<Array<any>>([]);
   const [alertVisible, setAlertVisible] = useState(false);
+  const [errorAlertVisible, setErrorAlertVisible] = useState(false);
 
   const handleVerify = () => {
-      console.log(code);
-    if (code.join('') === '111111') {
-      Alert.alert('이메일 인증 성공');
-      navigation.navigate('EmailLogin');
-    } else {
-      setAlertVisible(true);
-    }
+    certificationCheck(email, code);
   };
 
   const handleChange = (value: string, index: number) => {
@@ -173,6 +170,39 @@ function EmailVerificationScreen({ route, navigation }: Props) {
       }
     }
   };
+
+  const certificationCheck = async (email: string, certificationNumber: string) => {
+      try {
+        const data = {
+          email: email,
+          certificationNumber: code.join('')
+        };
+
+        const response = await axios.post('http://192.168.45.77:8080/auth/certification-check', data);
+
+        if (response.status === 200) {
+          navigation.replace('EmailLogin');
+        }
+
+      } catch (error) {
+          //응답은 왔는데 오류 코드일 경우
+        if (error.response) {
+           if (error.response.status == 401) {
+               setAlertVisible(true);
+           } else if (error.response.status == 500) {
+               setErrorAlertVisible(true);
+           } else {
+            console.log(error.response.status);
+            console.log(error.response.data);
+            console.log('Error Headers:', error.response.headers);
+            setErrorAlertVisible(true);
+           }
+        } else {
+            console.log("연결이 안된다고?");
+           setErrorAlertVisible(true);
+        }
+      }
+    };
 
   //앱바
   useLayoutEffect(() => {
@@ -232,6 +262,30 @@ function EmailVerificationScreen({ route, navigation }: Props) {
               <TouchableOpacity
                 style={[styles.alertButton, styles.cancelButton]}
                 onPress={() => setAlertVisible(false)}
+              >
+                <Text style={styles.cancelButtonText}>확인</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={errorAlertVisible}
+        onRequestClose={() => setErrorAlertVisible(false)}
+        style={{ justifyContent: 'center', alignItems: 'center', margin: 0 }} // 전체 화면을 덮도록 설정
+      >
+        <View style={styles.alertOverlay}>
+          <View style={styles.alertContainer}>
+            <Text style={styles.alertTitle}>오류</Text>
+            <Text style={styles.alertMessage}>다시 시도해주세요.</Text>
+            <View style={{height: 15}}/>
+            <View style={styles.alertButtonContainer}>
+              <TouchableOpacity
+                style={[styles.alertButton, styles.cancelButton]}
+                onPress={() => setErrorAlertVisible(false)}
               >
                 <Text style={styles.cancelButtonText}>확인</Text>
               </TouchableOpacity>
