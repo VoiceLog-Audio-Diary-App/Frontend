@@ -81,7 +81,56 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       paddingVertical: 15,
       borderRadius: 5,
-  }
+  },
+  alertOverlay: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+    },
+    alertContainer: {
+      width: 300,
+      backgroundColor: 'white',
+      borderRadius: 20,
+      padding: 20,
+      alignItems: 'center',
+    },
+    alertTitle: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      marginBottom: 10,
+    },
+    alertMessage: {
+      fontSize: 14,
+      color: '#8E8E8E',
+      textAlign: 'center',
+      marginBottom: 5,
+    },
+    alertButtonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+      },
+      alertButton: {
+        flex: 1,
+        height: 45,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 10,
+        marginHorizontal: 5,
+      },
+      cancelButton: {
+        backgroundColor: '#252525',
+      },
+      cancelButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+      },
 
 });
 
