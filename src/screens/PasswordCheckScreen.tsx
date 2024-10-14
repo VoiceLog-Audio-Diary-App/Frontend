@@ -1,13 +1,16 @@
-import React, { useState, useLayoutEffect } from 'react';
-import { SafeAreaView, Text, Button, StyleSheet, Alert, View, TouchableWithoutFeedback, TouchableOpacity, TextInput } from 'react-native';
+import React, { useState, useLayoutEffect, useEffect } from 'react';
+import { SafeAreaView, Modal, Text, Button, StyleSheet, Alert, View, TouchableWithoutFeedback, TouchableOpacity, TextInput } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { refreshAccessToken } from '../authService';
+import axios, {isCancel, AxiosError} from 'axios';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 type RootStackParamList = {
     PasswordCheck: undefined;
     PasswordReset: undefined;
-    NewPassword: { email: string };
+    NewPassword: undefined;
 };
 
 type PasswordCheckScreenNavigationProp = StackNavigationProp<
@@ -83,17 +86,74 @@ const styles = StyleSheet.create({
 });
 
 function PasswordCheckScreen({ navigation }: Props) {
-    const [email, setEmail] = useState('example@company.com');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [secureText, setSecureText] = useState(true);
+    const [passwordAlertVisible, setPasswordAlertVisible] = useState(false);
+    const [errorAlertVisible, setErrorAlertVisible] = useState(false);
+
+    useEffect(() => {
+      const loadEmail = async () => {
+        try {
+
+          const storedEmail = await EncryptedStorage.getItem('email');
+
+          if (storedEmail) {
+            setEmail(storedEmail);
+          }
+        } catch (error) {
+          console.error('Error checking load email:', error);
+        }
+      };
+      loadEmail();
+    }, []);
 
     const handleConfirm = () => {
-        if (password == 'password123') {
-            navigation.navigate('NewPassword', { email: email })
-        } else {
-            Alert.alert('비밀번호가 옳지 않습니다.');
-        }
+        passwordCheck(password);
     };
+
+    const passwordCheck = async (oldPassword: string) => {
+        try {
+          const data = {
+            oldPassword: password
+          };
+
+        const accessToken = await EncryptedStorage.getItem('accessToken');
+
+          const response = await axios.post('http://192.168.45.77:8080/mypage/password-check', data,
+          {
+              headers: {
+                Authorization: `Bearer ${accessToken}`
+              }
+          });
+
+          if (response.status === 200) {
+            navigation.navigate('NewPassword');
+          }
+        } catch (error) {
+            //응답은 왔는데 오류 코드일 경우
+          if (error.response) {
+             if (error.response.status === 400) {
+                 setPasswordAlertVisible(true);
+             } else if (error.response.status === 500) {
+                 setErrorAlertVisible(true);
+             } else if (error.response.status === 401) {
+                 const refreshSuccess = await refreshAccessToken();
+                 if (refreshSuccess)
+                    await passwordCheck(oldPassword);
+                 else
+                    setErrorAlertVisible(true);
+             } else {
+              console.log(error.response.status);
+              console.log(error.response.data);
+              console.log('Error Headers:', error.response.headers);
+              setErrorAlertVisible(true);
+             }
+          } else {
+             setErrorAlertVisible(true);
+          }
+        }
+      };
 
     //앱바
     useLayoutEffect(() => {
@@ -155,6 +215,54 @@ function PasswordCheckScreen({ navigation }: Props) {
                 <Text style={{fontSize: 15, fontWeight: '600', color: 'white'}}>확인</Text>
             </TouchableOpacity>
         </View>
+
+        <Modal
+            animationType="slide"
+            transparent={true}
+            visible={passwordAlertVisible}
+            onRequestClose={() => setPasswordAlertVisible(false)}
+            style={{ justifyContent: 'center', alignItems: 'center', margin: 0 }}
+        >
+            <View style={styles.alertOverlay}>
+              <View style={styles.alertContainer}>
+                <Text style={styles.alertTitle}>비밀번호 불일치</Text>
+                <Text style={styles.alertMessage}>비밀번호가 옳지 않습니다.</Text>
+                <View style={{height: 15}}/>
+                <View style={styles.alertButtonContainer}>
+                  <TouchableOpacity
+                    style={[styles.alertButton, styles.cancelButton]}
+                    onPress={() => setPasswordAlertVisible(false)}
+                  >
+                    <Text style={styles.cancelButtonText}>확인</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+        </Modal>
+
+        <Modal
+            animationType="slide"
+            transparent={true}
+            visible={errorAlertVisible}
+            onRequestClose={() => setErrorAlertVisible(false)}
+            style={{ justifyContent: 'center', alignItems: 'center', margin: 0 }}
+          >
+            <View style={styles.alertOverlay}>
+              <View style={styles.alertContainer}>
+                <Text style={styles.alertTitle}>오류</Text>
+                <Text style={styles.alertMessage}>다시 시도해주세요.</Text>
+                <View style={{height: 15}}/>
+                <View style={styles.alertButtonContainer}>
+                  <TouchableOpacity
+                    style={[styles.alertButton, styles.cancelButton]}
+                    onPress={() => setErrorAlertVisible(false)}
+                  >
+                    <Text style={styles.cancelButtonText}>확인</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Modal>
      </SafeAreaView>
   );
 }

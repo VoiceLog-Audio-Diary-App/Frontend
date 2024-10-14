@@ -4,9 +4,11 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { removeWhitespace, validatePassword } from "../util";
+import axios, {isCancel, AxiosError} from 'axios';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 type RootStackParamList = {
-  NewPassword: { email: string };
+  NewPassword: undefined;
   EmailLogin: undefined;
 };
 
@@ -95,7 +97,6 @@ const styles = StyleSheet.create({
 function NewPasswordScreen({ route, navigation }: Props) {
   const [newPassword, setNewPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
-  const { email } = route.params;
   const [secureText, setSecureText] = useState(true);
   const [secureText2, setSecureText2] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string>('');
