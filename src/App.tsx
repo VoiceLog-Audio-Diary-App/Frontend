@@ -14,6 +14,7 @@ import ViewDiaryScreen from './screens/ViewDiaryScreen';
 import EditDiaryScreen from './screens/EditDiaryScreen';
 import TabNavigation from './navigations/Tab';
 import PasswordCheckScreen from './screens/PasswordCheckScreen';
+import PasswordEmailVerificationScreen from './screens/PasswordEmailVerificationScreen';
 
 const Stack = createStackNavigator();
 
@@ -31,6 +32,7 @@ function App() {
         <Stack.Screen name="EmailVerification" component={EmailVerificationScreen} />
         <Stack.Screen name="PasswordReset" component={PasswordResetScreen} />
         <Stack.Screen name="NewPassword" component={NewPasswordScreen} />
+        <Stack.Screen name="PasswordEmailVerification" component={PasswordEmailVerificationScreen} />
 
         {/* 캘린더 및 녹음 관련 화면들 */}
         {/* <Stack.Screen name="Calendar" component={CalendarScreen} /> */}
