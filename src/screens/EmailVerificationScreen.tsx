@@ -6,7 +6,7 @@ import axios, {isCancel, AxiosError} from 'axios';
 import EncryptedStorage from 'react-native-encrypted-storage';
 
 type RootStackParamList = {
-  EmailVerification: { email: string };
+  EmailVerification: { email: string, password: string };
   EmailLogin: undefined;
 };
 
@@ -144,10 +144,11 @@ const styles = StyleSheet.create({
 
 function EmailVerificationScreen({ route, navigation }: Props) {
   const [code, setCode] = useState(Array(6).fill(''));
-  const { email } = route.params;
+  const { email, password } = route.params;
   const codeInputRefs = useRef<Array<any>>([]);
   const [alertVisible, setAlertVisible] = useState(false);
   const [errorAlertVisible, setErrorAlertVisible] = useState(false);
+  const [signUpAlertVisible, setSignUpAlertVisible] = useState(false);
 
   const handleVerify = () => {
     certificationCheck(email, code);
@@ -181,7 +182,7 @@ function EmailVerificationScreen({ route, navigation }: Props) {
         const response = await axios.post('http://192.168.45.77:8080/auth/certification-check', data);
 
         if (response.status === 200) {
-          navigation.replace('EmailLogin');
+          SignUp(email, password, code.join(''));
         }
 
       } catch (error) {
@@ -199,6 +200,41 @@ function EmailVerificationScreen({ route, navigation }: Props) {
            }
         } else {
             console.log("연결이 안된다고?");
+           setErrorAlertVisible(true);
+        }
+      }
+    };
+
+    const SignUp = async (email: string, password: string, certificationNumber: string) => {
+      try {
+        const data = {
+          email: email,
+          password: password,
+          certificationNumber: code.join('')
+        };
+
+        const response = await axios.post('http://192.168.45.77:8080/auth/sign-up', data);
+
+        if (response.status === 200) {
+          navigation.replace('EmailLogin');
+        }
+
+      } catch (error) {
+          //응답은 왔는데 오류 코드일 경우
+        if (error.response) {
+           if (error.response.status == 401) {
+               setAlertVisible(true);
+           } else if (error.response.status == 500) {
+               setErrorAlertVisible(true);
+           } else if (error.response.status == 400) {
+               setSignUpAlertVisible(true);
+           } else {
+            console.log(error.response.status);
+            console.log(error.response.data);
+            console.log('Error Headers:', error.response.headers);
+            setErrorAlertVisible(true);
+           }
+        } else {
            setErrorAlertVisible(true);
         }
       }
@@ -286,6 +322,30 @@ function EmailVerificationScreen({ route, navigation }: Props) {
               <TouchableOpacity
                 style={[styles.alertButton, styles.cancelButton]}
                 onPress={() => setErrorAlertVisible(false)}
+              >
+                <Text style={styles.cancelButtonText}>확인</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={signUpAlertVisible}
+        onRequestClose={() => setSignUpAlertVisible(false)}
+        style={{ justifyContent: 'center', alignItems: 'center', margin: 0 }} // 전체 화면을 덮도록 설정
+      >
+        <View style={styles.alertOverlay}>
+          <View style={styles.alertContainer}>
+            <Text style={styles.alertTitle}>이미 존재하는 회원</Text>
+            <Text style={styles.alertMessage}>이미 사용 중인 이메일입니다.</Text>
+            <View style={{height: 15}}/>
+            <View style={styles.alertButtonContainer}>
+              <TouchableOpacity
+                style={[styles.alertButton, styles.cancelButton]}
+                onPress={() => setSignUpAlertVisible(false)}
               >
                 <Text style={styles.cancelButtonText}>확인</Text>
               </TouchableOpacity>

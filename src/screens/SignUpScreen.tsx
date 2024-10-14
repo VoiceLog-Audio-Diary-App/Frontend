@@ -9,7 +9,7 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 
 type RootStackParamList = {
   SignUp: undefined;
-  EmailVerification: { email: string };
+  EmailVerification: { email: string, password: string };
   EmailLogin: undefined;
 };
 
@@ -268,7 +268,7 @@ function SignUpScreen({ navigation }: Props) {
           const response = await axios.post('http://192.168.45.77:8080/auth/email-certification', data);
 
           if (response.status === 200) {
-            navigation.navigate('EmailVerification', { email: email });
+            navigation.navigate('EmailVerification', { email: email, password: password });
           }
 
         } catch (error) {
