@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
-import { View, TextInput, Button, ScrollView, TouchableOpacity, Keyboard, KeyboardAvoidingView, Alert, Image, StyleSheet, SafeAreaView, Text, TouchableWithoutFeedback } from 'react-native';
+import { View, Modal, TextInput, Button, ScrollView, TouchableOpacity, Keyboard, KeyboardAvoidingView, Alert, Image, StyleSheet, SafeAreaView, Text, TouchableWithoutFeedback } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { removeWhitespace, validatePassword, validateEmail } from "../util";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Logo from '../../assets/logo.png';
+import axios, {isCancel, AxiosError} from 'axios';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 type RootStackParamList = {
   SignUp: undefined;
@@ -157,6 +159,55 @@ const styles = StyleSheet.create({
   scrollView: {
      flexGrow: 1,
   },
+  alertOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  alertContainer: {
+    width: 300,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 20,
+    alignItems: 'center',
+  },
+  alertTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  alertMessage: {
+    fontSize: 14,
+    color: '#8E8E8E',
+    textAlign: 'center',
+    marginBottom: 5,
+  },
+  alertButtonContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      width: '100%',
+    },
+    alertButton: {
+      flex: 1,
+      height: 45,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 10,
+      marginHorizontal: 5,
+    },
+    cancelButton: {
+      backgroundColor: '#F0F0F0',
+    },
+    cancelButtonText: {
+      color: '#8E8E8E',
+      fontWeight: 'bold',
+    },
 
 });
 
@@ -167,6 +218,8 @@ function SignUpScreen({ navigation }: Props) {
   const [errorMessage2, setErrorMessage2] = useState<string>('');
   const [secureText, setSecureText] = useState(true);
   const [isDisabled, setIsDisabled] = useState(true);
+  const [signUpAlertVisible, setSignUpAlertVisible] = useState(false);
+  const [errorAlertVisible, setErrorAlertVisible] = useState(false);
 
   //앱바
     useLayoutEffect(() => {
@@ -205,6 +258,33 @@ function SignUpScreen({ navigation }: Props) {
    useEffect(() => {
      setIsDisabled(!(email && password && !errorMessage && !errorMessage2));
    }, [email, password, errorMessage, errorMessage2]);
+
+   const postLoginCodeAndState = async (email: string) => {
+       try {
+         const data = {
+           email: email
+         };
+
+         const response = await axios.post('http://192.168.45.77:8080/auth/email-check', data);
+
+         if (response.status === 200) {
+           navigation.navigate('EmailVerification');
+         }
+
+       } catch (error) {
+           //응답은 왔는데 오류 코드일 경우
+         if (error.response) {
+            if (error.response.status == 400) {
+                setSignUpAlertVisible(true);
+            } else if (error.response.status == 500) {
+                setErrorAlertVisible(true);
+            }
+         } else {
+            setErrorAlertVisible(true);
+         }
+         setAlertVisible(true);
+       }
+     };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -261,6 +341,53 @@ function SignUpScreen({ navigation }: Props) {
         </TouchableWithoutFeedback>
       </View>
 
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={signUpAlertVisible}
+          onRequestClose={() => setSignUpAlertVisible(false)}
+          style={{ justifyContent: 'center', alignItems: 'center', margin: 0 }} // 전체 화면을 덮도록 설정
+        >
+          <View style={styles.alertOverlay}>
+            <View style={styles.alertContainer}>
+              <Text style={styles.alertTitle}>이미 존재하는 회원</Text>
+              <Text style={styles.alertMessage}>이미 사용 중인 이메일입니다.</Text>
+              <View style={{height: 15}}/>
+              <View style={styles.alertButtonContainer}>
+                <TouchableOpacity
+                  style={[styles.alertButton, styles.cancelButton]}
+                  onPress={() => setSignUpAlertVisible(false)}
+                >
+                  <Text style={styles.cancelButtonText}>확인</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={errorAlertVisible}
+          onRequestClose={() => setErrorAlertVisible(false)}
+          style={{ justifyContent: 'center', alignItems: 'center', margin: 0 }} // 전체 화면을 덮도록 설정
+        >
+          <View style={styles.alertOverlay}>
+            <View style={styles.alertContainer}>
+              <Text style={styles.alertTitle}>오류</Text>
+              <Text style={styles.alertMessage}>다시 시도해주세요.</Text>
+              <View style={{height: 15}}/>
+              <View style={styles.alertButtonContainer}>
+                <TouchableOpacity
+                  style={[styles.alertButton, styles.cancelButton]}
+                  onPress={() => setErrorAlertVisible(false)}
+                >
+                  <Text style={styles.cancelButtonText}>확인</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
     </SafeAreaView>
     </TouchableWithoutFeedback>
   );
