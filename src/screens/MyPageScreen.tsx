@@ -4,6 +4,8 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import Modal from 'react-native-modal';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import EncryptedStorage from 'react-native-encrypted-storage';
+
 
 type RootStackParamList = {
     MyPage: undefined;
@@ -179,6 +181,16 @@ function MyPageScreen({ navigation }: Props) {
         const url = 'https://cheddar-drawbridge-dd8.notion.site/5239c3d00ae4405988798440fca6620b?pvs=4';
         Linking.openURL(url).catch(err => console.error("Couldn't load page", err));
     }
+
+    const removeStoredData = async () => {
+        try {
+            await EncryptedStorage.removeItem('accessToken');
+            await EncryptedStorage.removeItem('email');
+        } catch (error) {
+            console.error('Failed to remove stored data: ', error);
+        }
+    };
+
   return (
      <SafeAreaView style={styles.container}>
        <Text style={styles.text}>{email}</Text>
@@ -302,8 +314,9 @@ function MyPageScreen({ navigation }: Props) {
                   <TouchableOpacity
                     style={[styles.alertButton, styles.confirmButton]}
                     onPress={() => {
+                      removeStoredData();
                       setLogoutAlertVisible(false);
-                      navigation.navigate('Login');
+                      navigation.replace('Login');
                     }}
                   >
                     <Text style={styles.confirmButtonText}>로그아웃</Text>
