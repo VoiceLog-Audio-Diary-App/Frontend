@@ -227,7 +227,7 @@ function NewPasswordScreen({ route, navigation }: Props) {
              } else if (error.response.status === 401) {
                  const refreshSuccess = await refreshAccessToken();
                  if (refreshSuccess)
-                    await passwordCheck(oldPassword);
+                    passwordCheck(oldPassword);
                  else
                     setErrorAlertVisible(true);
              } else {

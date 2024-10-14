@@ -413,7 +413,7 @@ function PasswordCheckScreen({ navigation }: Props) {
               animationType="slide"
               transparent={true}
               visible={emailAlertVisible}
-              onRequestClose={() => setErrorAlertVisible(false)}
+              onRequestClose={() => setEmailAlertVisible(false)}
               style={{ justifyContent: 'center', alignItems: 'center', margin: 0 }}
             >
               <View style={styles.alertOverlay}>
@@ -425,7 +425,9 @@ function PasswordCheckScreen({ navigation }: Props) {
                   <View style={styles.alertButtonContainer}>
                     <TouchableOpacity
                       style={[styles.alertButton, styles.cancelButton]}
-                      onPress={() => setErrorAlertVisible(false)}
+                      onPress={() => {
+                          setEmailAlertVisible(false)
+                      }}
                     >
                       <Text style={styles.cancelButtonText}>아니오</Text>
                     </TouchableOpacity>
@@ -433,7 +435,7 @@ function PasswordCheckScreen({ navigation }: Props) {
                     <TouchableOpacity
                       style={[styles.alertButton, styles.alertConfirmButton]}
                       onPress={() => {
-                        setErrorAlertVisible(false);
+                        setEmailAlertVisible(false);
                         sendEmail(email);
                       }}
                     >
